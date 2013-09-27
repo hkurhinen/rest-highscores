@@ -25,6 +25,13 @@
                    $("#scorediv").html(data);
                 });
             });
+	    
+	    $("#requestkey").click(function(){
+		var gamename = $("#gamekeyname").val();
+		$.get("game/"+gamename+"/key", function( data ) {
+                   $("#keyarea").html(data);
+                });
+	    });
             
         });
         </script>
@@ -45,14 +52,51 @@
             </div>
         </div>
         <div>
-            <p>To add new scores you need to send POST call to address sopulit.servebeer.com:42511/RestHighscores/game/add</p>
-            <p>and you need to include values gamename, nickname and score to the POST call. You don't need to care if your game is not listed yet as it will be done automatically.</p>
-            <form action="game/add" method="POST">
+            <p>To add new scores you need to send POST request to address sopulit.servebeer.com:42511/RestHighscores/game/add</p>
+            <p>You need to include POST parameters "gamename", "nickname", and "sccore". If you want your results to be shown as verified
+	    <br/>you need also send url parameter "codedmsg" which should contain gamename+score (like "matti1234") encrypted with your publickey.</p>
+	    <p>Code examples:</p>
+	    <h3>Java</h3>
+	    <pre><code>
+	    public String getBase64CodedMsg(String nickname, String score, String pubkey){
+		String msg = nickname+score;
+		byte[] bytes = Base64.decodeBase64(pubkey);
+		String codedmsg = "";
+		try {
+		    PublicKey publickey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(bytes));
+		    Cipher cipher = Cipher.getInstance("RSA");
+		    cipher.init(Cipher.ENCRYPT_MODE, publickey);
+		    byte[] codedBytes = cipher.doFinal(msg.getBytes());
+		    codedmsg = Base64.encodeBase64String(codedBytes);
+		} catch (Exception ex) {
+		   System.err.println("Something went wrong.");
+		}
+		return codedmsg;
+	    }
+	    </code></pre>
+	    <h3>C#</h3>
+	    <pre><code>
+	    Coming soon!
+	    </code></pre>
+	    <h3>Python</h3>
+	    <pre><code>
+	    Coming soon!
+	    </code></pre>
+	    <p>If you have done verification with some other language and are willing to share, please contact me.</p>
+	    
+	    <p>With this form you can test sending unverified results.</p>
+	    <form action="game/add" method="POST">
                 <p>Game:<input type="text" name="gamename" /></p>
                 <p>Nickname:<input type="text" name="nickname" /></p>
                 <p>Score:<input type="text" name="score" /></p>
                 <input type="submit" value="add" />
             </form>
         </div>
+	<div>
+	    <p>This is only for testing, once I have done page with login system, it will be used to get keys.</p>
+	    <p><input id="gamekeyname" type="text" /><button id="requestkey">GET PUBKEY</button></p>
+	    <pre id="keyarea">
+	    </pre>
+	</div>
     </body>
 </html>

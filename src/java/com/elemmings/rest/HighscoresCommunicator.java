@@ -52,6 +52,16 @@ public class HighscoresCommunicator {
     }
     
     @GET
+    @Path("/{gamename}/key")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getKey(@PathParam("gamename") String gamename){
+	if(!Highscores.mongo.hasKeys(gamename)){
+	    Highscores.security.generateRSAKeys(gamename);
+	}
+	return Highscores.mongo.getPublicKey(gamename);
+    }
+    
+    @GET
     @Path("/games")
     @Produces(MediaType.APPLICATION_JSON)
     public String listGames(){
@@ -60,8 +70,24 @@ public class HighscoresCommunicator {
     
     @POST
     @Path("/add")
-    public void setScore(@FormParam("gamename") String gamename, @FormParam("nickname") String nickname, @FormParam("score") String score){
-        Highscores.mongo.addScore(gamename, nickname, Long.parseLong(score));
+    public void setScore(@FormParam("gamename") String gamename, @FormParam("nickname") String nickname, @FormParam("score") String score, @FormParam("codedmsg") String codedMsg){
+        System.out.println("Checking if score is legit.");
+	System.out.println(gamename);
+	System.out.println(nickname);
+	System.out.println(score);
+	System.out.println(codedMsg);
+	if(codedMsg == null || codedMsg.isEmpty()){
+	    Highscores.mongo.addScore(gamename, nickname, Long.parseLong(score), false);
+	}else{
+	    System.out.println("Verifying..");
+	    if(Highscores.security.isVerified(nickname, score, gamename, codedMsg)){
+		Highscores.mongo.addScore(gamename, nickname, Long.parseLong(score), true);
+	    }else{
+		System.out.println("Verification failed.");
+		Highscores.mongo.addScore(gamename, nickname, Long.parseLong(score), false);
+	    }  
+	}
+
     }
     
    /*@GET //TODO change to POST or PUT function because exposing this as GET causes cheating to be easy.
