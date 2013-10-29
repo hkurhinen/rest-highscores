@@ -77,7 +77,7 @@ public class MongoManager {
     }
     
     public String getGames(){
-        String games = "[";
+        String games = "{[";
         Set<String> collections = defaultdb.getCollectionNames();
         for(String game : collections){
             if(!game.equals("system.indexes")){ //remove some weird system.indexes collection from results
@@ -85,7 +85,7 @@ public class MongoManager {
             }
         }
         games = games.substring(0, games.lastIndexOf(","));
-        games += "]";
+        games += "]}";
         return games;
     }
     
