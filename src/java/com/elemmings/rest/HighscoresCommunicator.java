@@ -2,6 +2,7 @@
 package com.elemmings.rest;
 
 import com.elemmings.core.Highscores;
+import java.util.ArrayList;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -64,7 +65,7 @@ public class HighscoresCommunicator {
     @GET
     @Path("/games")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listGames(){
+    public ArrayList<String> listGames(){
         return Highscores.mongo.getGames();
     }
     

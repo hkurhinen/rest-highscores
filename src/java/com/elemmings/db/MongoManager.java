@@ -76,16 +76,18 @@ public class MongoManager {
         return html;
     }
     
-    public String getGames(){
-        String games = "{[";
+    public ArrayList<String> getGames(){
+        //String games = "{[";
         Set<String> collections = defaultdb.getCollectionNames();
+	ArrayList<String> games = new ArrayList<String>();
         for(String game : collections){
             if(!game.equals("system.indexes")){ //remove some weird system.indexes collection from results
-                games += "\""+game+"\",";
+                //games += "\""+game+"\",";
+		games.add(game);
             }
         }
-        games = games.substring(0, games.lastIndexOf(","));
-        games += "]}";
+        //games = games.substring(0, games.lastIndexOf(","));
+        //games += "]}";
         return games;
     }
     
