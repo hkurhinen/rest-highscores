@@ -2,7 +2,7 @@
 package com.elemmings.rest;
 
 import com.elemmings.core.Highscores;
-import java.util.ArrayList;
+import com.sun.jersey.api.json.JSONWithPadding;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -64,9 +65,9 @@ public class HighscoresCommunicator {
     
     @GET
     @Path("/games")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<String> listGames(){
-        return Highscores.mongo.getGames();
+    @Produces("application/x-javascript")
+    public JSONWithPadding listGames(@QueryParam("callback") String callback){
+	return new JSONWithPadding(Highscores.mongo.getGames(),callback);
     }
     
     @POST
